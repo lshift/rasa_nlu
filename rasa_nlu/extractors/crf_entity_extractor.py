@@ -283,7 +283,7 @@ class CRFEntityExtractor(EntityExtractor):
                 algorithm='lbfgs',
                 c1=1.0,  # coefficient for L1 penalty
                 c2=1e-3,  # coefficient for L2 penalty
-                max_iterations=50,  # stop earlier
+                max_iterations=25,  # stop earlier
                 all_possible_transitions=True  # include transitions that are possible, but not observed
         )
         self.ent_tagger.fit(X_train, y_train)
