@@ -81,7 +81,10 @@ class CRFEntityExtractor(EntityExtractor):
 
         self.BILOU_flag = config["entity_crf_BILOU_flag"]
         self.crf_features = config["entity_crf_features"]
-        self.max_iterations = config.asdict().get("crf_entity_extractor_max_iterations", 50)
+        config_dict = config.asdict()
+        self.max_iterations = config_dict.get("crf_entity_extractor_max_iterations", 50)
+        self.L1_C = config_dict.get("crf_entity_extractor_l1_c", 1)
+        self.L2_C = config_dict.get("crf_entity_extractor_l2_c", 1e-3)
         if training_data.entity_examples:
             # convert the dataset into features
             dataset = self._create_dataset(training_data.entity_examples)
@@ -297,8 +300,8 @@ class CRFEntityExtractor(EntityExtractor):
         y_train = [self._sentence_to_labels(sent) for sent in df_train]
         self.ent_tagger = sklearn_crfsuite.CRF(
                 algorithm='lbfgs',
-                c1=1.0,  # coefficient for L1 penalty
-                c2=1e-3,  # coefficient for L2 penalty
+                c1=self.L1_C,  # coefficient for L1 penalty
+                c2=self.L2_C,  # coefficient for L2 penalty
                 max_iterations=self.max_iterations,  # stop earlier
                 all_possible_transitions=True  # include transitions that are possible, but not observed
         )
